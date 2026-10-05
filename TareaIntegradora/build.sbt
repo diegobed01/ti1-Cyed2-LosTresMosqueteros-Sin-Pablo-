@@ -4,5 +4,6 @@ ThisBuild / scalaVersion := "3.9.0"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "TareaIntegradora"
+    name := "TareaIntegradora",
+    libraryDependencies += "org.scalameta" %% "munit" % "1.1.0" % Test
   )
