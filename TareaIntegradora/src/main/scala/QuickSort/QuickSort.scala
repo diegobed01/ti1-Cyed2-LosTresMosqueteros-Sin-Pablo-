@@ -1,5 +1,7 @@
 package QuickSort
 
+import scala.annotation.tailrec
+
 class QuickSort {
 
   /**
@@ -11,26 +13,27 @@ class QuickSort {
    * @return three lists containing elements less than, equal to,
    *         and greater than the pivot
    */
-  def partition(list: List[Int], pivot: Int):
-  (List[Int], List[Int], List[Int]) = {
+  def partition(list: List[Int], pivot: Int): (List[Int], List[Int], List[Int]) = {
 
-    list match {
+    @tailrec
+    def partitionAux(list: List[Int], less: List[Int], equal: List[Int], greater: List[Int]): (List[Int], List[Int], List[Int]) = {
 
-      case Nil =>
-        (List(), List(), List())
+      list match {
+        case Nil =>
+          (less.reverse, equal.reverse, greater.reverse)
 
-      case head :: tail =>
-
-        val (less, equal, greater) = partition(tail, pivot)
-
-        if (head < pivot) {
-          (head :: less, equal, greater)
-        } else if (head == pivot) {
-          (less, head :: equal, greater)
-        } else {
-          (less, equal, head :: greater)
-        }
+        case head :: tail =>
+          if (head < pivot) {
+            partitionAux(tail, head :: less, equal, greater)
+          } else if (head == pivot) {
+            partitionAux(tail, less, head :: equal, greater)
+          } else {
+            partitionAux(tail, less, equal, head :: greater)
+          }
+      }
     }
+
+    partitionAux(list, List(), List(), List())
   }
 
   /**

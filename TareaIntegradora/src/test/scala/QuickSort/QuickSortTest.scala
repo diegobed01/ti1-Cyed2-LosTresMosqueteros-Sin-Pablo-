@@ -79,4 +79,15 @@ class QuickSortTest extends munit.FunSuite {
 
     assertEquals(result, expected)
   }
+
+  test("keeps all elements after sorting") {
+    val quickSort = new QuickSort()
+
+    val input = List(5, 5, 3, 3, 8, 8, 1)
+    val expected = List(1, 3, 3, 5, 5, 8, 8)
+
+    val result = quickSort.quickSort(input)
+
+    assertEquals(result, expected)
+  }
 }
