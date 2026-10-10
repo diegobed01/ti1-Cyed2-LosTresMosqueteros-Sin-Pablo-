@@ -36,6 +36,7 @@ class QuickSort {
     partitionAux(list, List(), List(), List())
   }
 
+
   /**
    * Sorts a list using QuickSort with a three-way partition.
    *
