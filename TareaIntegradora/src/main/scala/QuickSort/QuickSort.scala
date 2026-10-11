@@ -37,22 +37,25 @@ class QuickSort {
   }
 
 
+
   /**
-   * Sorts a list using QuickSort with a three-way partition.
+   * Sorts a list using randomized QuickSort with a three-way partition.
    *
    * @param list the list to sort
    * @return the sorted list
    */
   def quickSort(list: List[Int]): List[Int] = {
-
     list match {
-
       case Nil =>
         List()
 
-      case pivot :: tail =>
+      case head :: tail =>
+        val pivotIndex = scala.util.Random.nextInt(list.length)
+        val (beforePivot, fromPivot) = list.splitAt(pivotIndex)
+        val pivot = fromPivot.head
+        val remaining = beforePivot ++ fromPivot.tail
 
-        val (less, equal, greater) = partition(tail, pivot)
+        val (less, equal, greater) = partition(remaining, pivot)
 
         quickSort(less) ++ (pivot :: equal) ++ quickSort(greater)
     }
