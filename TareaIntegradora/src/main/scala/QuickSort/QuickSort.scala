@@ -1,42 +1,63 @@
 package QuickSort
 
+import scala.annotation.tailrec
+
 class QuickSort {
 
-    def partition(list: List[Int], pivot: Int):
-    (List[Int], List[Int], List[Int]) = {
+  /**
+   * Partitions a list into elements smaller than, equal to,
+   * and greater than the pivot.
+   *
+   * @param list the list to partition
+   * @param pivot the pivot value
+   * @return three lists containing elements less than, equal to,
+   *         and greater than the pivot
+   */
+  def partition(list: List[Int], pivot: Int): (List[Int], List[Int], List[Int]) = {
+
+    @tailrec
+    def partitionAux(list: List[Int], less: List[Int], equal: List[Int], greater: List[Int]): (List[Int], List[Int], List[Int]) = {
 
       list match {
-
         case Nil =>
-          (List(), List(), List())
+          (less.reverse, equal.reverse, greater.reverse)
 
         case head :: tail =>
-
-          val (less, equal, greater) = partition(tail, pivot)
-
           if (head < pivot) {
-            (head :: less, equal, greater)
+            partitionAux(tail, head :: less, equal, greater)
           } else if (head == pivot) {
-            (less, head :: equal, greater)
+            partitionAux(tail, less, head :: equal, greater)
           } else {
-            (less, equal, head :: greater)
+            partitionAux(tail, less, equal, head :: greater)
           }
       }
     }
 
-    def quickSort(list: List[Int]): List[Int] = {
-
-      list match {
-
-        case Nil =>
-          List()
-
-        case pivot :: tail =>
-
-          val (less, equal, greater) = partition(tail, pivot)
-
-          quickSort(less) ++ equal ++ quickSort(greater)
-      }
-    }
+    partitionAux(list, List(), List(), List())
   }
 
+
+
+  /**
+   * Sorts a list using randomized QuickSort with a three-way partition.
+   *
+   * @param list the list to sort
+   * @return the sorted list
+   */
+  def quickSort(list: List[Int]): List[Int] = {
+    list match {
+      case Nil =>
+        List()
+
+      case head :: tail =>
+        val pivotIndex = scala.util.Random.nextInt(list.length)
+        val (beforePivot, fromPivot) = list.splitAt(pivotIndex)
+        val pivot = fromPivot.head
+        val remaining = beforePivot ++ fromPivot.tail
+
+        val (less, equal, greater) = partition(remaining, pivot)
+
+        quickSort(less) ++ (pivot :: equal) ++ quickSort(greater)
+    }
+  }
+}
