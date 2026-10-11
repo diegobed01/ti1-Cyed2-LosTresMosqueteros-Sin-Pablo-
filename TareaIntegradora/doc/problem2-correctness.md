@@ -28,27 +28,27 @@ Since the original list contains no elements, all three resulting lists must be 
 
 ### Inductive Step (`L = head :: tail`)
 
-**Inductive Hypothesis (I.H.):** Assume that `partition(tail, pivot)` correctly classifies all elements of `tail` into the three groups.
+**Inductive Hypothesis (I.H.):** Assume that the partitioning process correctly classifies all elements of `tail` into the three groups.
 
-We must prove that `partition(head :: tail, pivot)` also classifies all elements correctly.
+We must prove that the partitioning process also classifies all elements of `head :: tail` correctly.
 
 **Case 1: `head < pivot`**
 
-By the definition of `partition`, `head` is added to `less`. By the I.H., all elements of `tail` are already classified correctly. Therefore, all elements of `head :: tail` are classified correctly.
+The element `head` is added to `less`. By the I.H., all elements of `tail` are already classified correctly. Therefore, all elements of `head :: tail` are classified correctly.
 
 **Case 2: `head == pivot`**
 
-By the definition of `partition`, `head` is added to `equal`. By the I.H., all elements of `tail` are already classified correctly. Therefore, all elements of `head :: tail` are classified correctly.
+The element `head` is added to `equal`. By the I.H., all elements of `tail` are already classified correctly. Therefore, all elements of `head :: tail` are classified correctly.
 
 **Case 3: `head > pivot`**
 
-By the definition of `partition`, `head` is added to `greater`. By the I.H., all elements of `tail` are already classified correctly. Therefore, all elements of `head :: tail` are classified correctly.
+The element `head` is added to `greater`. By the I.H., all elements of `tail` are already classified correctly. Therefore, all elements of `head :: tail` are classified correctly.
 
-In each case, `head` is added to exactly one group, and the recursive call preserves the classification of the remaining elements.
+In each case, `head` is added to exactly one group, and the recursive call processes the remaining elements. Reversing the groups at the end restores their original relative order without losing or duplicating elements.
 
 ### Conclusion
 
-Since the property holds for `Nil` and is preserved when a new element is added to the list, by structural induction, `partition` correctly classifies all elements into the three groups.
+Since the property holds for `Nil` and is preserved when a new element is added to the list, by structural induction, the partitioning process correctly classifies all elements into the three groups.
 
 ---
 
@@ -56,7 +56,7 @@ Since the property holds for `Nil` and is preserved when a new element is added 
 
 ### Property
 
-For every list `L` of integers, `quickSort(L)` returns a list that is sorted in non-decreasing order and contains exactly the same elements as `L`.
+For every finite list `L` of integers, `quickSort(L)` returns a list that is sorted in non-decreasing order and contains exactly the same elements as `L`.
 
 ### Base Case (`L = Nil`)
 
@@ -66,23 +66,31 @@ The function returns:
 
 The empty list is sorted and contains exactly the same elements as the input list. Therefore, the property holds for the base case.
 
-### Inductive Step (`L = pivot :: tail`)
+### Inductive Step (`L` is non-empty)
 
-**Inductive Hypothesis (I.H.):** Assume that `quickSort` correctly sorts lists smaller than `L`.
+**Inductive Hypothesis (I.H.):** Assume that `quickSort` correctly sorts every list containing fewer elements than `L`.
 
-We must prove that `quickSort(pivot :: tail)` also returns a sorted list containing exactly the original elements.
+We must prove that `quickSort(L)` also returns a sorted list containing exactly the original elements.
 
-1. The function calls `partition(tail, pivot)` and obtains `less`, `equal`, and `greater`.
-2. By the correctness of `partition`, every element in `less` is smaller than `pivot`, every element in `equal` is equal to `pivot`, and every element in `greater` is greater than `pivot`.
-3. By the I.H., `quickSort(less)` and `quickSort(greater)` return sorted lists containing all their respective input elements.
-4. The function constructs the result:
+1. The function randomly selects an element from `L` as the pivot.
+
+2. The selected pivot is removed from the list, producing a list called `remaining`.
+
+3. The function calls `partition(remaining, pivot)` and obtains `less`, `equal`, and `greater`.
+
+4. By the correctness of the partitioning process, every element in `less` is smaller than `pivot`, every element in `equal` is equal to `pivot`, and every element in `greater` is greater than `pivot`.
+
+5. Since `less` and `greater` contain fewer elements than `L`, the I.H. guarantees that `quickSort(less)` and `quickSort(greater)` return sorted lists containing all their respective input elements.
+
+6. The function constructs the result:
 
    `quickSort(less) ++ (pivot :: equal) ++ quickSort(greater)`
 
-5. All elements in `quickSort(less)` are smaller than the pivot, the pivot and elements in `equal` have the same value, and all elements in `quickSort(greater)` are greater than the pivot. Therefore, the resulting list is sorted in non-decreasing order.
-6. The partition preserves every element of `tail`, and the pivot is explicitly included in the result. Therefore, no original element is lost or duplicated.
+7. All elements in `quickSort(less)` are smaller than the pivot. The pivot and all elements in `equal` have the same value. All elements in `quickSort(greater)` are greater than the pivot. Therefore, the resulting list is sorted in non-decreasing order.
 
-Thus, `quickSort(pivot :: tail)` returns a sorted list containing exactly the same elements as the input list.
+8. The partitioning process preserves every element of `remaining`, and the selected pivot is included exactly once in the result. Therefore, no original element is lost or duplicated.
+
+The choice of pivot is random, but any element selected from the list satisfies the same reasoning. Thus, the algorithm returns a sorted list containing exactly the original elements.
 
 ### Conclusion
 

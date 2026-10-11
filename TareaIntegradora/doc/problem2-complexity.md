@@ -16,7 +16,7 @@ The auxiliary space complexity is Θ(n), because the function creates three list
 
 ## Complexity of `quickSort`
 
-The `quickSort` function partitions the list and recursively sorts the `less` and `greater` groups. Its complexity depends on the sizes of these groups.
+The `quickSort` function chooses a pivot randomly, partitions the remaining elements into the `less`, `equal`, and `greater` groups, and recursively sorts the `less` and `greater` groups.
 
 Let:
 
@@ -24,11 +24,11 @@ Let:
 - `k` be the number of elements smaller than the pivot.
 - `m` be the number of elements greater than the pivot.
 
-The recurrence is:
+The recurrence for a particular pivot choice is:
 
 **T(n) = T(k) + T(m) + cn**
 
-Here, `cn` represents the linear cost of partitioning and combining the lists.
+Here, `cn` represents the linear cost of partitioning and combining the lists. The sizes of the recursive groups depend on the selected pivot.
 
 ### Best Case
 
@@ -54,19 +54,23 @@ Since f(n) = Θ(n), the Master Theorem gives:
 
 Therefore, the best-case time complexity is **Θ(n log n)**.
 
+### Expected Case
+
+Since the pivot is chosen randomly, the expected running time for distinct elements is:
+
+**E[T(n)] = Θ(n log n)**
+
+Random pivot selection reduces the likelihood of repeatedly obtaining highly unbalanced partitions, although it does not eliminate the worst case.
+
 ### Worst Case
 
-The worst case occurs when the pivot produces highly unbalanced groups. For example, if the elements are distinct and the first element is always the smallest or largest, one group contains n − 1 elements and the other is empty.
+The worst case occurs when the selected pivots repeatedly produce highly unbalanced groups. One recursive group contains n − 1 elements and the other is empty.
 
 The recurrence becomes:
 
 **T(n) = T(n − 1) + cn**
 
-Expanding the recurrence:
-
-**T(n) = T(n − 2) + c(n − 1) + cn**
-
-Continuing the expansion produces a sum of linear terms:
+Expanding the recurrence produces a sum of linear terms:
 
 **T(n) = c(2 + 3 + ... + n)**
 
@@ -103,10 +107,4 @@ The implementation uses immutable lists, so intermediate lists may require addit
 
 ## Conclusion
 
-The three-way partition takes Θ(n) time. The overall running time of `quickSort` depends on the distribution of the pivot values and the resulting recursive groups.
-
-- **Best case:** Θ(n log n)
-- **Worst case:** Θ(n²)
-- **All elements equal:** Θ(n)
-
-Three-way partitioning reduces unnecessary recursive calls on values equal to the pivot, making it particularly useful for lists with many duplicates.
+The three-way partition takes Θ(n) time. Randomized pivot selection gives an expected time complexity of Θ(n log n) for distinct elements, while the worst case remains Θ(n²). When all elements are equal, three-way partitioning allows the algorithm to run in Θ(n) time.
