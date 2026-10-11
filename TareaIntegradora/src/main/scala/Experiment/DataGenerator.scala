@@ -154,4 +154,63 @@ object DataGenerator {
       Nil
     )
   }
+
+
+  /**
+   * Reverses a list of points using tail recursion
+   *
+   * @param list        the list of points to reverse
+   * @param accumulator the partially reversed list
+   * @return the reversed list of points
+   */
+  @tailrec
+  def reversePointsRC(list: List[List[Int]], accumulator: List[List[Int]]): List[List[Int]] = {
+
+    list match {
+
+      case Nil => accumulator
+
+      case head :: tail => reversePointsRC(tail, head :: accumulator)
+    }
+  }
+
+
+  /**
+   * Generates points using tail recursion
+   *
+   * @param n           number of points to generate
+   * @param current     current coordinate value
+   * @param accumulator generated points
+   * @return a list containing n points
+   */
+  @tailrec
+  def generatePointsRC(n: Int, current: Int, accumulator: List[List[Int]]): List[List[Int]] = {
+
+    if (current >= n) {
+
+      reversePointsRC(accumulator, Nil)
+
+    } else {
+
+      val point = List(current, current * 2)
+
+      generatePointsRC(
+        n,
+        current + 1,
+        point :: accumulator
+      )
+    }
+  }
+
+
+  /**
+   * Generates a list containing n points
+   *
+   * @param n number of points to generate
+   * @return a list containing n points
+   */
+  def generatePoints(n: Int): List[List[Int]] = {
+
+    generatePointsRC(n, 0, Nil)
+  }
 }

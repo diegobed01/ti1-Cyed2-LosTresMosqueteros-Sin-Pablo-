@@ -36,4 +36,17 @@ class DataGeneratorTest extends munit.FunSuite {
       List(2, 2, 2, 2, 2)
     )
   }
+
+  test("generate points") {
+
+    assertEquals(
+      DataGenerator.generatePoints(4),
+      List(
+        List(0, 0),
+        List(1, 2),
+        List(2, 4),
+        List(3, 6)
+      )
+    )
+  }
 }
