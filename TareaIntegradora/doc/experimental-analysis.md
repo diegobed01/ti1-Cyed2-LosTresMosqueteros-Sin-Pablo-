@@ -277,12 +277,16 @@ teórico esperado.
 
 ## 7. Comparación de los algoritmos
 
-La siguiente gráfica presenta los tiempos promedio de los tres
-algoritmos. Se utilizaron escalas logarítmicas para facilitar la
-visualización, debido a la diferencia entre los tamaños de entrada y los
-tiempos obtenidos.
+### 7.1 Comparación de los tiempos experimentales
 
-![Comparación de algoritmos](images/comparation-algorhitms.png)
+La siguiente gráfica presenta los tiempos promedio obtenidos para los
+tres algoritmos.
+
+Se utilizaron escalas logarítmicas para facilitar la visualización,
+debido a las diferencias entre los tamaños de entrada y los tiempos
+registrados.
+
+![Comparación experimental](images/comparation-algorhitms.png)
 
 Para `n = 1000000` se obtuvieron los siguientes tiempos promedio:
 
@@ -295,17 +299,48 @@ Para `n = 1000000` se obtuvieron los siguientes tiempos promedio:
 Dentro de los escenarios utilizados, QuickSort presentó los menores
 tiempos de ejecución.
 
-Number of Inversions y Closest Points presentaron un crecimiento mayor,
-consistente con sus ajustes experimentales de tipo `n log n`.
+Number of Inversions y Closest Points presentaron tiempos mayores y un
+crecimiento consistente con sus ajustes de tipo `n log n`.
 
-Sin embargo, los valores absolutos no deben interpretarse como una
-comparación directa de eficiencia entre problemas equivalentes, ya que
-cada algoritmo realiza una tarea diferente y utiliza un tipo de entrada
-distinto.
+Sin embargo, estos valores no deben interpretarse como una comparación
+directa de eficiencia entre problemas equivalentes, ya que cada
+algoritmo resuelve un problema diferente y utiliza un escenario de
+entrada distinto.
 
-La comparación es principalmente útil para observar la forma de
-crecimiento de sus tiempos de ejecución.
+---
 
+### 7.2 Comparación de las funciones de ajuste
+
+Además de comparar los tiempos experimentales, se compararon
+gráficamente las funciones que mejor se ajustaron a los datos de cada
+algoritmo.
+
+Las funciones obtenidas fueron:
+
+**Number of Inversions**
+
+`T(n) = 3.6397 × 10^-5 (n log2(n)) + 0.7257`
+
+**Improving QuickSort**
+
+`T(n) = 1.5944 × 10^-5 n + 0.4626`
+
+**Closest Points**
+
+`T(n) = 5.2686 × 10^-5 (n log2(n)) - 1.8661`
+
+La comparación se presenta en la siguiente gráfica:
+
+![Comparación de funciones de ajuste](images/fitted-function-comparation.png)
+
+Se observa que Number of Inversions y Closest Points presentan
+funciones de crecimiento de tipo `n log n`, mientras que QuickSort,
+para el escenario de valores repetidos utilizado, presenta un
+comportamiento experimental aproximadamente lineal.
+
+Esta diferencia se relaciona con la partición de tres vías de QuickSort,
+que agrupa los elementos iguales al pivote y reduce el trabajo recursivo
+cuando existen muchos valores repetidos.
 ---
 
 ## 8. Análisis de resultados
@@ -434,6 +469,11 @@ En QuickSort, el escenario de valores repetidos produjo un comportamiento
 aproximadamente lineal. Este resultado muestra el beneficio de utilizar
 una partición de tres vías cuando existen muchos elementos iguales al
 pivote.
+
+La comparación gráfica de las funciones ajustadas permitió observar con
+mayor claridad las diferencias entre el crecimiento lineal obtenido por
+QuickSort en el escenario utilizado y el crecimiento `n log n` observado
+en Number of Inversions y Closest Points.
 
 Las pequeñas irregularidades observadas en los tiempos muestran que las
 mediciones experimentales están sujetas a factores externos. Sin embargo,
