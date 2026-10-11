@@ -32,4 +32,19 @@ class ExperimentRunnerTest extends munit.FunSuite {
 
     assert(average >= 0.0)
   }
+
+  test("benchmark QuickSort") {
+
+    val input = DataGenerator.generateRepeated(20, 5)
+
+    val (times, average) =
+      ExperimentRunner.benchmarkQuickSort(input)
+
+    assertEquals(
+      Benchmark.countTimesRC(times, 0),
+      9
+    )
+
+    assert(average >= 0.0)
+  }
 }

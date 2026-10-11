@@ -2,6 +2,7 @@ package Experiment
 
 import NumberOfInversions.NumberOfInversions
 import ClosestPoints.ClosestPoints
+import QuickSort.QuickSort
 
 object ExperimentRunner {
 
@@ -29,6 +30,21 @@ object ExperimentRunner {
 
     Benchmark.runBenchmark {
       ClosestPoints.closestDistance(points)
+    }
+  }
+
+  /**
+   * Runs the benchmark for the QuickSort algorithm
+   *
+   * @param input the list to sort
+   * @return the execution times and their average
+   */
+  def benchmarkQuickSort(input: List[Int]): (List[Double], Double) = {
+
+    val quickSort = new QuickSort()
+
+    Benchmark.runBenchmark {
+      quickSort.quickSort(input)
     }
   }
 }
