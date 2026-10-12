@@ -15,6 +15,17 @@ class QuickSort {
    */
   def partition(list: List[Int], pivot: Int): (List[Int], List[Int], List[Int]) = {
 
+
+    /**
+     * Partitions the remaining elements using tail recursion
+     *
+     * @param list    the remaining elements to partition
+     * @param less    elements smaller than the pivot
+     * @param equal   elements equal to the pivot
+     * @param greater elements greater than the pivot
+     * @return three lists containing elements smaller than, equal to,
+     *         and greater than the pivot
+     */
     @tailrec
     def partitionAux(list: List[Int], less: List[Int], equal: List[Int], greater: List[Int]): (List[Int], List[Int], List[Int]) = {
 
