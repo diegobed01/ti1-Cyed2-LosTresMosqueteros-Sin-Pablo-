@@ -1,55 +1,52 @@
-# Análisis experimental
+# Experimental Analysis
 
-## 1. Entorno de ejecución
+## 1. Execution Environment
 
-Las pruebas de rendimiento se realizaron en la misma máquina con el fin
-de mantener un entorno de ejecución consistente.
+The performance tests were carried out on the same machine in order to
+maintain a consistent execution environment.
 
-- Procesador: 12th Gen Intel(R) Core(TM) i5-1235U
-- Memoria RAM: 16 GB
-- Sistema operativo: Microsoft Windows 11 Pro
-- Arquitectura: 64 bits
-- Versión del sistema operativo: 10.0.26200
+- Processor: 12th Gen Intel(R) Core(TM) i5-1235U
+- RAM: 16 GB
+- Operating system: Microsoft Windows 11 Pro
+- Architecture: 64-bit
+- Operating system version: 10.0.26200
 
-Durante las mediciones se buscó mantener las mismas condiciones de
-ejecución y evitar otras aplicaciones de alto consumo que pudieran
-afectar los tiempos registrados.
-
----
-
-## 2. Metodología
-
-La métrica utilizada para la experimentación fue el tiempo de ejecución
-en milisegundos.
-
-Para cada algoritmo y cada tamaño de entrada se siguió el siguiente
-procedimiento:
-
-1. Generar la entrada antes de iniciar la medición.
-2. Ejecutar el algoritmo 10 veces con la misma entrada.
-3. Registrar el tiempo de cada ejecución.
-4. Descartar el tiempo de la primera ejecución.
-5. Calcular el promedio de las 9 ejecuciones restantes.
-
-La generación de los datos no se incluyó dentro del tiempo medido, de
-modo que el resultado correspondiera únicamente a la ejecución del
-algoritmo.
+During the measurements, the same execution conditions were maintained
+as much as possible, while avoiding other high-consumption applications
+that could affect the recorded times.
 
 ---
 
-## 3. Tamaños de entrada
+## 2. Methodology
 
-Las entradas se organizaron según las categorías definidas en el
-enunciado de la tarea:
+The metric used for the experiment was execution time in milliseconds.
+
+For each algorithm and each input size, the following procedure was used:
+
+1. Generate the input before starting the measurement.
+2. Execute the algorithm 10 times using the same input.
+3. Record the execution time of each run.
+4. Discard the first execution time.
+5. Calculate the average of the remaining 9 executions.
+
+Input generation was not included in the measured time, so the result
+corresponded only to the execution of the algorithm.
+
+---
+
+## 3. Input Sizes
+
+The inputs were organized according to the categories defined in the
+assignment:
 
 - Toy: `n < 100`
 - Small: `100 <= n < 10000`
 - Medium: `10000 <= n < 100000`
 - Large: `n >= 1000000`
 
-Los tamaños utilizados fueron:
+The following sizes were used:
 
-| Categoría | Tamaños utilizados |
+| Category | Sizes used |
 | --- | --- |
 | Toy | 50 |
 | Small | 100, 500, 1000, 5000 |
@@ -58,54 +55,53 @@ Los tamaños utilizados fueron:
 
 ---
 
-## 4. Escenarios de entrada
+## 4. Input Scenarios
 
-Para cada algoritmo se utilizó un escenario de entrada relacionado con
-el objetivo del problema.
+For each algorithm, an input scenario related to the objective of the
+problem was used.
 
 ### 4.1 Number of Inversions
 
-Se utilizaron listas en orden descendente.
+Lists in descending order were used.
 
-Este tipo de entrada contiene una gran cantidad de inversiones y permite
-evaluar el algoritmo sobre un caso exigente para el conteo de
-inversiones.
+This type of input contains a large number of inversions and allows the
+algorithm to be evaluated on a demanding case for inversion counting.
 
 ### 4.2 Improving QuickSort
 
-Se utilizaron listas con valores repetidos.
+Lists with repeated values were used.
 
-Este escenario se relaciona directamente con el objetivo del problema,
-ya que la partición de tres vías separa los valores en elementos menores,
-iguales y mayores al pivote, mejorando especialmente el comportamiento
-cuando existen muchos elementos iguales.
+This scenario is directly related to the objective of the problem,
+because the three-way partition separates values into elements smaller
+than, equal to, and greater than the pivot, improving the behavior of the
+algorithm when many equal elements are present.
 
 ### 4.3 Closest Points
 
-Se utilizaron puntos generados de forma determinística.
+Deterministically generated points were used.
 
-Cada punto se representó como:
+Each point was represented as:
 
 `(x, 2x)`
 
-Por ejemplo:
+For example:
 
 `(0, 0), (1, 2), (2, 4), ...`
 
-La generación determinística permitió utilizar exactamente la misma
-entrada en las diferentes repeticiones de cada tamaño.
+Deterministic generation made it possible to use exactly the same input
+during the different repetitions for each size.
 
 ---
 
-## 5. Resultados
+## 5. Results
 
-Para cada tamaño se realizaron 10 ejecuciones. La primera medición fue
-descartada y el promedio se calculó utilizando las 9 ejecuciones
-restantes.
+For each size, 10 executions were performed. The first measurement was
+discarded and the average was calculated using the remaining 9
+executions.
 
 ### 5.1 Number of Inversions
 
-| Tamaño n | Tiempo promedio (ms) |
+| Input size n | Average time (ms) |
 | ---: | ---: |
 | 50 | 0.7469 |
 | 100 | 0.4170 |
@@ -119,7 +115,7 @@ restantes.
 
 ### 5.2 Improving QuickSort
 
-| Tamaño n | Tiempo promedio (ms) |
+| Input size n | Average time (ms) |
 | ---: | ---: |
 | 50 | 0.0239 |
 | 100 | 0.0318 |
@@ -133,7 +129,7 @@ restantes.
 
 ### 5.3 Closest Points
 
-| Tamaño n | Tiempo promedio (ms) |
+| Input size n | Average time (ms) |
 | ---: | ---: |
 | 50 | 0.8008 |
 | 100 | 0.5888 |
@@ -147,44 +143,46 @@ restantes.
 
 ---
 
-## 6. Complejidad experimental y teórica
+## 6. Experimental and Theoretical Complexity
 
-Para determinar qué función representa mejor el comportamiento de los
-datos experimentales se compararon tres posibles modelos:
+To determine which function best represents the behavior of the
+experimental data, three possible models were compared:
 
-- Lineal: `n`
-- Lineal-logarítmico: `n log n`
-- Cuadrático: `n²`
+- Linear: `n`
+- Linear-logarithmic: `n log n`
+- Quadratic: `n²`
 
-La comparación se realizó mediante el coeficiente de determinación `R²`.
-Un valor de `R²` más cercano a 1 representa un mejor ajuste de los datos.
+The comparison was performed using the coefficient of determination
+`R²`. An `R²` value closer to 1 represents a better fit to the
+experimental data.
 
 ### 6.1 Number of Inversions
 
-Los valores obtenidos fueron:
+The following values were obtained:
 
-| Modelo | R² |
+| Model | R² |
 | --- | ---: |
 | n | 0.999824 |
 | n log n | 0.999992 |
 | n² | 0.998794 |
 
-El mejor ajuste experimental fue `n log n`.
+The best experimental fit was `n log n`.
 
-La función obtenida fue:
+The resulting function was:
 
 `T(n) = 3.6397 × 10^-5 (n log2(n)) + 0.7257`
 
-con:
+with:
 
 `R² = 0.999992`
 
-La complejidad teórica obtenida mediante la recurrencia del algoritmo es:
+The theoretical complexity obtained from the recurrence of the algorithm
+is:
 
 `Θ(n log n)`
 
-Por lo tanto, el comportamiento experimental coincide con el crecimiento
-esperado según el análisis teórico.
+Therefore, the experimental behavior is consistent with the growth
+expected from the theoretical analysis.
 
 ![Number of Inversions](images/number-inversions.png)
 
@@ -192,42 +190,40 @@ esperado según el análisis teórico.
 
 ### 6.2 Improving QuickSort
 
-Los valores obtenidos fueron:
+The following values were obtained:
 
-| Modelo | R² |
+| Model | R² |
 | --- | ---: |
 | n | 0.993322 |
 | n log n | 0.992265 |
 | n² | 0.987680 |
 
-El mejor ajuste experimental fue el modelo lineal.
+The best experimental fit was the linear model.
 
-La función obtenida fue:
+The resulting function was:
 
 `T(n) = 1.5944 × 10^-5 n + 0.4626`
 
-con:
+with:
 
 `R² = 0.993322`
 
-Este comportamiento se relaciona directamente con el escenario
-experimental utilizado, en el cual todos los elementos tenían el mismo
-valor.
+This behavior is directly related to the experimental scenario that was
+used, in which all elements had the same value.
 
-La partición de tres vías agrupa los elementos iguales al pivote en la
-partición `equal`. En este escenario prácticamente todos los elementos
-son procesados durante una sola partición y las listas `less` y `greater`
-quedan vacías.
+The three-way partition groups elements equal to the pivot into the
+`equal` partition. In this scenario, almost all elements are processed
+during a single partition and the `less` and `greater` lists remain
+empty.
 
-Por esta razón, para este tipo particular de entrada se observa un
-comportamiento cercano a:
+For this reason, this particular type of input shows behavior close to:
 
 `O(n)`
 
-Esto no significa que QuickSort tenga complejidad lineal para cualquier
-entrada. En general, su comportamiento depende de la distribución de los
-datos y de las particiones obtenidas. El escenario utilizado permite
-observar específicamente la mejora buscada por la partición de tres vías.
+This does not mean that QuickSort has linear complexity for every input.
+In general, its behavior depends on the distribution of the data and the
+partitions obtained. The scenario used allows the improvement provided by
+the three-way partition to be specifically observed.
 
 ![QuickSort](images/quicksort.png)
 
@@ -235,87 +231,83 @@ observar específicamente la mejora buscada por la partición de tres vías.
 
 ### 6.3 Closest Points
 
-Los valores obtenidos fueron:
+The following values were obtained:
 
-| Modelo | R² |
+| Model | R² |
 | --- | ---: |
 | n | 0.999129 |
 | n log n | 0.999647 |
 | n² | 0.999631 |
 
-El mejor ajuste experimental fue `n log n`.
+The best experimental fit was `n log n`.
 
-La función obtenida fue:
+The resulting function was:
 
 `T(n) = 5.2686 × 10^-5 (n log2(n)) - 1.8661`
 
-con:
+with:
 
 `R² = 0.999647`
 
-El término independiente negativo pertenece únicamente al ajuste
-matemático obtenido y no representa un tiempo de ejecución negativo.
+The negative constant term belongs only to the mathematical fit and does
+not represent a negative execution time.
 
-La complejidad teórica del algoritmo es:
+The theoretical complexity of the algorithm is:
 
 `O(n log n)`
 
-La recurrencia correspondiente es:
+The corresponding recurrence is:
 
 `T(n) = 2T(n/2) + O(n)`
 
-El algoritmo divide el conjunto de puntos en dos partes, resuelve
-recursivamente ambas mitades y mantiene el paso de combinación en tiempo
-lineal.
+The algorithm divides the set of points into two parts, recursively
+solves both halves, and keeps the combining step in linear time.
 
-Por lo tanto, el ajuste experimental es consistente con el crecimiento
-teórico esperado.
+Therefore, the experimental fit is consistent with the expected
+theoretical growth.
 
 ![Closest Points](images/closestpoints.png)
 
 ---
 
-## 7. Comparación de los algoritmos
+## 7. Comparison of the Algorithms
 
-### 7.1 Comparación de los tiempos experimentales
+### 7.1 Comparison of Experimental Times
 
-La siguiente gráfica presenta los tiempos promedio obtenidos para los
-tres algoritmos.
+The following graph presents the average execution times obtained for the
+three algorithms.
 
-Se utilizaron escalas logarítmicas para facilitar la visualización,
-debido a las diferencias entre los tamaños de entrada y los tiempos
-registrados.
+Logarithmic scales were used to improve visualization because of the
+differences between the input sizes and the recorded execution times.
 
-![Comparación experimental](images/comparation-algorhitms.png)
+![Experimental comparison](images/comparation-algorhitms.png)
 
-Para `n = 1000000` se obtuvieron los siguientes tiempos promedio:
+For `n = 1000000`, the following average execution times were obtained:
 
-| Algoritmo | Tiempo promedio (ms) |
+| Algorithm | Average time (ms) |
 | --- | ---: |
 | Number of Inversions | 726.2274 |
 | Improving QuickSort | 16.3821 |
 | Closest Points | 1048.9111 |
 
-Dentro de los escenarios utilizados, QuickSort presentó los menores
-tiempos de ejecución.
+Within the scenarios used, QuickSort presented the lowest execution
+times.
 
-Number of Inversions y Closest Points presentaron tiempos mayores y un
-crecimiento consistente con sus ajustes de tipo `n log n`.
+Number of Inversions and Closest Points presented higher execution times
+and growth consistent with their `n log n` fits.
 
-Sin embargo, estos valores no deben interpretarse como una comparación
-directa de eficiencia entre problemas equivalentes, ya que cada
-algoritmo resuelve un problema diferente y utiliza un escenario de
-entrada distinto.
+However, these values should not be interpreted as a direct comparison
+of efficiency between equivalent problems, since each algorithm solves a
+different problem and uses a different type of input.
 
 ---
 
-### 7.2 Comparación de las funciones de ajuste
+### 7.2 Comparison of the Fitted Functions
 
-Además de comparar los tiempos experimentales, se compararon
-gráficamente las funciones que mejor se ajustaron a los datos de cada
-algoritmo.
+In addition to comparing the experimental times, the functions that best
+fit the data for each algorithm were also compared graphically.
 
-Las funciones obtenidas fueron:
+The resulting functions were:
 
 **Number of Inversions**
 
@@ -329,154 +321,152 @@ Las funciones obtenidas fueron:
 
 `T(n) = 5.2686 × 10^-5 (n log2(n)) - 1.8661`
 
-La comparación se presenta en la siguiente gráfica:
+The comparison is shown in the following graph:
 
-![Comparación de funciones de ajuste](images/fitted-function-comparation.png)
+![Comparison of fitted functions](images/fitted-function-comparation.png)
 
-Se observa que Number of Inversions y Closest Points presentan
-funciones de crecimiento de tipo `n log n`, mientras que QuickSort,
-para el escenario de valores repetidos utilizado, presenta un
-comportamiento experimental aproximadamente lineal.
+It can be observed that Number of Inversions and Closest Points have
+growth functions of type `n log n`, while QuickSort, for the repeated
+values scenario used in the experiment, shows approximately linear
+experimental behavior.
 
-Esta diferencia se relaciona con la partición de tres vías de QuickSort,
-que agrupa los elementos iguales al pivote y reduce el trabajo recursivo
-cuando existen muchos valores repetidos.
+This difference is related to QuickSort's three-way partition, which
+groups elements equal to the pivot and reduces the recursive work when
+many repeated values are present.
+
 ---
 
-## 8. Análisis de resultados
+## 8. Analysis of Results
 
-### 8.1 Patrón entre tamaño de entrada y tiempo
+### 8.1 Pattern Between Input Size and Execution Time
 
-En términos generales, al aumentar el tamaño de entrada también aumentó
-el tiempo de ejecución de los tres algoritmos.
+In general, as the input size increased, the execution time of the three
+algorithms also increased.
 
-En Number of Inversions y Closest Points el crecimiento fue más evidente
-para los tamaños grandes y presentó un comportamiento consistente con
-`n log n`.
+For Number of Inversions and Closest Points, the growth became more
+evident for larger sizes and showed behavior consistent with `n log n`.
 
-QuickSort presentó tiempos considerablemente menores debido al escenario
-de valores repetidos utilizado.
+QuickSort presented considerably lower execution times because of the
+repeated-values scenario used.
 
-En algunos tamaños pequeños y medianos se presentaron variaciones en las
-que una entrada más grande obtuvo un tiempo promedio menor que una entrada
-más pequeña.
+For some small and medium input sizes, variations were observed in which
+a larger input obtained a lower average execution time than a smaller
+input.
 
-Por ejemplo, para QuickSort:
+For example, for QuickSort:
 
 - `n = 10000`: 1.4744 ms
 - `n = 25000`: 0.9473 ms
 
-Estas variaciones no implican que la complejidad del algoritmo disminuya,
-sino que forman parte del comportamiento normal de una medición
-experimental.
+These variations do not imply that the complexity of the algorithm
+decreases. Instead, they are part of the normal behavior of experimental
+measurements.
 
 ---
 
-### 8.2 Relación observada
+### 8.2 Observed Relationship
 
-Para Number of Inversions, el modelo con mayor `R²` fue:
+For Number of Inversions, the model with the highest `R²` was:
 
 `n log n`
 
-con:
+with:
 
 `R² = 0.999992`
 
-Para Closest Points también fue:
+For Closest Points, it was also:
 
 `n log n`
 
-con:
+with:
 
 `R² = 0.999647`
 
-Para QuickSort, bajo el escenario de valores repetidos, el mejor ajuste
-fue:
+For QuickSort, under the repeated-values scenario, the best fit was:
 
 `n`
 
-con:
+with:
 
 `R² = 0.993322`
 
-Por lo tanto, los datos obtenidos permiten observar dos tipos principales
-de crecimiento experimental: lineal y lineal-logarítmico.
+Therefore, the obtained data show two main types of experimental growth:
+linear and linear-logarithmic.
 
 ---
 
-### 8.3 Comparación con la complejidad teórica
+### 8.3 Comparison with Theoretical Complexity
 
-Number of Inversions presentó un ajuste `n log n`, coincidiendo con su
-complejidad teórica `Θ(n log n)`.
+Number of Inversions presented an `n log n` fit, matching its theoretical
+complexity of `Θ(n log n)`.
 
-Closest Points también presentó un ajuste `n log n`, consistente con su
-complejidad teórica `O(n log n)`.
+Closest Points also presented an `n log n` fit, consistent with its
+theoretical complexity of `O(n log n)`.
 
-QuickSort presentó un ajuste lineal para la entrada utilizada. Este
-resultado no contradice su análisis general, ya que la experimentación
-se realizó específicamente con valores repetidos para observar el efecto
-de la partición de tres vías.
-
----
-
-### 8.4 Comportamientos inusuales
-
-Los datos no presentan un crecimiento perfectamente uniforme.
-
-Esto es especialmente visible en tamaños pequeños, donde el tiempo total
-de ejecución es muy reducido y cualquier variación del sistema puede
-tener un efecto considerable sobre la medición.
-
-También se presentaron algunos tiempos individuales más altos que los
-demás dentro de una misma entrada.
-
-Por esta razón se realizaron varias ejecuciones y se utilizó el promedio
-en lugar de depender de una única medición.
+QuickSort presented a linear fit for the input used. This result does not
+contradict its general analysis, because the experiment was specifically
+performed using repeated values in order to observe the effect of the
+three-way partition.
 
 ---
 
-### 8.5 Posibles fuentes de error
+### 8.4 Unusual Behavior
 
-Algunas posibles fuentes de variación en los resultados son:
+The data do not show perfectly uniform growth.
 
-- procesos del sistema operativo ejecutándose en segundo plano;
-- consumo de memoria por otras aplicaciones;
-- optimizaciones realizadas por la máquina virtual de Java;
-- recolección de basura de la JVM;
-- variaciones normales del sistema durante la ejecución;
-- precisión de la medición en algoritmos con tiempos muy pequeños.
+This is especially noticeable for small input sizes, where the total
+execution time is very low and any variation in the system can have a
+considerable effect on the measurement.
 
-Para reducir el efecto de estas variables se utilizó la misma máquina
-durante toda la experimentación, se realizaron 10 ejecuciones por entrada,
-se descartó la primera medición y se calculó el promedio de las 9
-mediciones restantes.
+Some individual execution times were also higher than the others for the
+same input.
+
+For this reason, several executions were performed and the average was
+used instead of relying on a single measurement.
 
 ---
 
-## 9. Conclusión experimental
+### 8.5 Possible Sources of Error
 
-Los resultados obtenidos permitieron observar una relación clara entre el
-tamaño de las entradas y el tiempo de ejecución de los algoritmos.
+Some possible sources of variation in the results are:
 
-Number of Inversions obtuvo como mejor ajuste experimental una función
-de tipo `n log n`, coincidiendo con la complejidad teórica obtenida para
-MergeSort modificado.
+- operating system processes running in the background;
+- memory usage by other applications;
+- optimizations performed by the Java Virtual Machine;
+- JVM garbage collection;
+- normal system variations during execution;
+- measurement precision for algorithms with very short execution times.
 
-Closest Points también presentó un comportamiento experimental de tipo
-`n log n`, consistente con el algoritmo de Divide and Conquer utilizado.
+To reduce the effect of these variables, the same machine was used
+throughout the experiment, 10 executions were performed for each input,
+the first measurement was discarded, and the average of the remaining 9
+measurements was calculated.
 
-En QuickSort, el escenario de valores repetidos produjo un comportamiento
-aproximadamente lineal. Este resultado muestra el beneficio de utilizar
-una partición de tres vías cuando existen muchos elementos iguales al
-pivote.
+---
 
-La comparación gráfica de las funciones ajustadas permitió observar con
-mayor claridad las diferencias entre el crecimiento lineal obtenido por
-QuickSort en el escenario utilizado y el crecimiento `n log n` observado
-en Number of Inversions y Closest Points.
+## 9. Experimental Conclusion
 
-Las pequeñas irregularidades observadas en los tiempos muestran que las
-mediciones experimentales están sujetas a factores externos. Sin embargo,
-los valores de `R²` obtenidos y las tendencias generales permiten concluir
-que los resultados experimentales son consistentes con el comportamiento
-esperado de las implementaciones utilizadas.
+The obtained results showed a clear relationship between input size and
+the execution time of the algorithms.
+
+Number of Inversions obtained an `n log n` function as its best
+experimental fit, matching the theoretical complexity obtained for the
+modified MergeSort algorithm.
+
+Closest Points also showed `n log n` experimental behavior, consistent
+with the Divide and Conquer algorithm used.
+
+For QuickSort, the repeated-values scenario produced approximately linear
+behavior. This result shows the benefit of using a three-way partition
+when many elements are equal to the pivot.
+
+The graphical comparison of the fitted functions made it possible to
+observe more clearly the differences between the linear growth obtained
+by QuickSort in the selected scenario and the `n log n` growth observed
+for Number of Inversions and Closest Points.
+
+The small irregularities observed in the execution times show that
+experimental measurements are subject to external factors. However, the
+obtained `R²` values and the general trends make it possible to conclude
+that the experimental results are consistent with the expected behavior
+of the implemented algorithms.

@@ -1,101 +1,105 @@
-# Problema 3 - Análisis de complejidad
+# Problem 3 - Complexity Analysis
 
-## Costo de las funciones auxiliares
+## Cost of the Auxiliary Functions
 
-Sea `n` la cantidad de puntos que recibe cada función.
+Let `n` be the number of points received by each function.
 
-| Función | Costo | Justificación |
+| Function | Cost | Justification |
 | --- | --- | --- |
-| `toPointsRC`, `listLengthRC`, `reverseListRC` | `O(n)` | Un paso por elemento |
-| `splitListRC` | `O(n)` | Recorre `n/2` elementos y luego invierte el acumulador |
-| `mergeByXRC`, `mergeByYRC` | `O(n)` | Cada paso consume un elemento; al final se invierte una vez |
-| `buildStripRC` | `O(n)` | Un paso por punto |
-| `scanStripRC` | `O(n)` | Cada punto revisa a lo sumo 8 vecinos (ver abajo) |
-| `distanceSquared`, `minLong`, `roundTo4` | `O(1)` | Operaciones aritméticas |
+| `toPointsRC`, `listLengthRC`, `reverseListRC` | `O(n)` | One step per element |
+| `splitListRC` | `O(n)` | Traverses `n/2` elements and then reverses the accumulator |
+| `mergeByXRC`, `mergeByYRC` | `O(n)` | Each step consumes one element; at the end, the list is reversed once |
+| `buildStripRC` | `O(n)` | One step per point |
+| `scanStripRC` | `O(n)` | Each point checks at most 8 neighbors (see below) |
+| `distanceSquared`, `minLong`, `roundTo4` | `O(1)` | Arithmetic operations |
 
 ---
 
-## ¿Por qué cada punto revisa a lo sumo 8 vecinos?
+## Why Does Each Point Check at Most 8 Neighbors?
 
-Esta es la parte clave para que la combinación sea lineal.
+This is the key part that makes the combine step linear.
 
-Sea `p` un punto de la franja y sea `d = min(d1, d2) > 0`. `scanNeighborsRC`
-solo sigue avanzando mientras el siguiente punto `q` cumple `(yq - yp)² < d`,
-es decir, `0 ≤ yq - yp < √d`. Llamemos `δ = √d`.
+Let `p` be a point in the strip and let `d = min(d1, d2) > 0`.
+`scanNeighborsRC` continues only while the next point `q` satisfies
+`(yq - yp)² < d`, that is, `0 ≤ yq - yp < √d`.
+Let `δ = √d`.
 
-Todos los puntos que se visitan sin cortar están en el rectángulo
+All the points visited before stopping are inside the rectangle
 
 `[midX - δ, midX + δ] × [yp, yp + δ)`
 
-de ancho `2δ` y alto `δ`.
+with width `2δ` and height `δ`.
 
-1. Dividimos la mitad izquierda del rectángulo en 4 cuadrados de lado
-   `δ/2`, y lo mismo con la mitad derecha.
-2. Dos puntos de `left` dentro del mismo cuadrado estarían a distancia
-   `≤ δ/√2 < δ`, lo que contradice que `d1 ≥ d` es la menor distancia
-   dentro de `left`. Lo mismo vale para `right`.
-3. Entonces en el rectángulo hay a lo sumo 4 puntos de `left` y 4 de
-   `right`: **a lo sumo 8 puntos, contando a `p`**.
-4. Por lo tanto `p` se compara con a lo sumo 7 puntos, más una comparación
-   adicional que dispara el corte: **a lo sumo 8 comparaciones por punto**.
+1. We divide the left half of the rectangle into 4 squares of side
+   `δ/2`, and we do the same with the right half.
+2. Two points from `left` inside the same square would be at a distance
+   `≤ δ/√2 < δ`, which would contradict the fact that `d1 ≥ d` is the
+   minimum distance inside `left`. The same reasoning applies to `right`.
+3. Therefore, the rectangle contains at most 4 points from `left` and
+   4 points from `right`: **at most 8 points, including `p`**.
+4. Therefore, `p` is compared with at most 7 points, plus one additional
+   comparison that triggers the stopping condition:
+   **at most 8 comparisons per point**.
 
-Si `d = 0`, el corte ocurre en la primera comparación. Si `d = ∞` (solo
-cuando `n = 2`), la franja tiene 2 puntos. En todos los casos el trabajo
-por punto es constante, y `scanStripRC` cuesta `O(n)`.
+If `d = 0`, the stopping condition occurs on the first comparison.
+If `d = ∞` (only when `n = 2`), the strip contains 2 points.
+In every case, the work performed per point is constant, so
+`scanStripRC` has cost `O(n)`.
 
-> El número 7 no aparece en el código: la condición de corte
-> `dy² ≥ best` es suficiente, y este argumento garantiza que se cumple
-> pronto.
+> The number 7 does not appear in the code: the stopping condition
+> `dy² ≥ best` is sufficient, and this argument guarantees that it is
+> reached quickly.
 
 ---
 
-## Ecuación de recurrencia de `closestRec`
+## Recurrence Equation of `closestRec`
 
-En cada llamada con `n ≥ 2`:
+In each call with `n ≥ 2`:
 
-- dos llamadas recursivas, sobre `⌊n/2⌋` y `⌈n/2⌉` puntos;
-- trabajo fuera de las llamadas:
+- there are two recursive calls, on `⌊n/2⌋` and `⌈n/2⌉` points;
+- the work outside the recursive calls consists of
   `splitListRC` + `mergeByYRC` + `buildStripRC` + `reverseListRC` +
-  `scanStripRC`, todos `O(n)`. En total, a lo sumo `cn` para una
-  constante `c`.
+  `scanStripRC`, all of which are `O(n)`. In total, this work is at most
+  `cn` for some constant `c`.
 
-Por lo tanto:
+Therefore:
 
 `T(n) = T(⌊n/2⌋) + T(⌈n/2⌉) + cn`
 
-Caso base:
+Base case:
 
 `T(1) = c0`
 
-Para la resolución tomamos `n = 2^k`, con lo que la recurrencia queda:
+To solve the recurrence, we assume `n = 2^k`, so the recurrence becomes:
 
 `T(n) = 2T(n/2) + cn`
 
-> **¿Por qué no es `2T(n/2) + O(n log n)`?** Si cada llamada ordenara su
-> franja por `y` desde cero, la combinación costaría `O(n log n)` y el
-> total sería `O(n log² n)`. Para evitarlo, `closestRec` devuelve también
-> sus puntos ordenados por `y`, y la combinación solo hace un `merge`
-> lineal de las dos mitades, igual que en merge sort.
+> **Why is it not `2T(n/2) + O(n log n)`?**
+> If each recursive call sorted its strip by `y` from the beginning,
+> the combine step would cost `O(n log n)` and the total complexity would
+> become `O(n log² n)`. To avoid this, `closestRec` also returns its
+> points sorted by `y`, so the combine step only performs a linear
+> `merge` of both halves, just like merge sort.
 
 ---
 
-## Resolución de la recurrencia
+## Solving the Recurrence
 
-### Paso 1
+### Step 1
 
-Partimos de:
+We start with:
 
 `T(n) = 2T(n/2) + cn`
 
-Aplicamos la recurrencia a `T(n/2)`:
+We apply the recurrence to `T(n/2)`:
 
 `T(n/2) = 2T(n/4) + cn/2`
 
 ---
 
-### Paso 2
+### Step 2
 
-Sustituimos:
+We substitute:
 
 `T(n) = 2[2T(n/4) + cn/2] + cn`
 
@@ -105,13 +109,13 @@ Sustituimos:
 
 ---
 
-### Paso 3
+### Step 3
 
-Aplicamos nuevamente la recurrencia:
+We apply the recurrence again:
 
 `T(n/4) = 2T(n/8) + cn/4`
 
-Entonces:
+Then:
 
 `T(n) = 4[2T(n/8) + cn/4] + 2cn`
 
@@ -119,27 +123,33 @@ Entonces:
 
 ---
 
-### Paso 4
+### Step 4
 
-Después de `i` expansiones se observa el patrón:
+After `i` expansions, the following pattern can be observed:
 
 `T(n) = 2^i T(n/2^i) + icn`
 
 ---
 
-### Paso 5
+### Step 5
 
-La recursión termina en el caso base:
+The recursion ends at the base case:
 
 `n/2^i = 1`
 
-Entonces `2^i = n`, es decir, `i = log2(n)`.
+Then:
+
+`2^i = n`
+
+Therefore:
+
+`i = log2(n)`
 
 ---
 
-### Paso 6
+### Step 6
 
-Sustituimos `i = log2(n)`:
+We substitute `i = log2(n)`:
 
 `T(n) = n T(1) + cn log2(n)`
 
@@ -147,66 +157,85 @@ Sustituimos `i = log2(n)`:
 
 ---
 
-### Paso 7
+### Step 7
 
-El término dominante es `n log n`, así que:
+The dominant term is `n log n`, so:
 
 `T(n) = Θ(n log n)`
 
-Es `Θ` y no solo `O` porque cada nivel de la recursión ejecuta
-`mergeByYRC` sobre todos los puntos del nivel, y eso cuesta al menos `n`
-por nivel durante `log2(n)` niveles.
+It is `Θ` and not only `O` because each level of the recursion executes
+`mergeByYRC` over all the points at that level, which costs at least `n`
+per level for `log2(n)` levels.
 
-Para `n` que no es potencia de 2, `T` es creciente en `n`, así que
-`T(n) ≤ T(2^⌈log2 n⌉) ≤ T(2n) = Θ(n log n)`.
+For values of `n` that are not powers of 2, `T` is increasing in `n`, so:
+
+`T(n) ≤ T(2^⌈log2 n⌉) ≤ T(2n) = Θ(n log n)`
 
 ---
 
-## Comprobación con el Método Maestro
+## Verification Using the Master Theorem
 
 `T(n) = 2T(n/2) + cn`
 
-Comparando con `T(n) = aT(n/b) + cn^d`:
+Comparing it with:
 
-`a = 2`, `b = 2`, `d = 1`
+`T(n) = aT(n/b) + cn^d`
+
+we have:
+
+`a = 2`
+
+`b = 2`
+
+`d = 1`
 
 `b^d = 2^1 = 2`
 
-Como `a = b^d`, por el segundo caso del Método Maestro:
+Since `a = b^d`, by the second case of the Master Theorem:
 
 `T(n) = Θ(n^d log n) = Θ(n log n)`
 
-El resultado coincide con el obtenido por sustituciones sucesivas.
+This result matches the one obtained through successive substitutions.
 
 ---
 
-## Complejidad temporal total de `closestDistance`
+## Total Time Complexity of `closestDistance`
 
-| Etapa | Costo |
+| Stage | Cost |
 | --- | --- |
-| `toPointsRC` (validar y convertir) | `Θ(n)` |
+| `toPointsRC` (validate and convert) | `Θ(n)` |
 | `listLengthRC` | `Θ(n)` |
-| `sortByX` (merge sort por `x`, misma recurrencia `2T(n/2) + cn`) | `Θ(n log n)` |
+| `sortByX` (merge sort by `x`, same recurrence `2T(n/2) + cn`) | `Θ(n log n)` |
 | `closestRec` | `Θ(n log n)` |
-| `sqrt` y `roundTo4` | `Θ(1)` |
+| `sqrt` and `roundTo4` | `Θ(1)` |
 
-**Total: `Θ(n log n)`**, que es la complejidad que pide el enunciado.
+**Total: `Θ(n log n)`**, which is the complexity required by the
+assignment.
 
 ---
 
-## Complejidad espacial
+## Space Complexity
 
-- **Memoria auxiliar: `O(n)`.** En cada momento solo están vivas las
-  listas de las llamadas del camino actual de la recursión, que suman
-  `n + n/2 + n/4 + … ≤ 2n`. Las listas de las llamadas que ya terminaron
-  se pueden liberar. En total se crean `Θ(n log n)` celdas de lista a lo
-  largo de la ejecución, pero no al mismo tiempo.
-- **Pila de llamadas: `O(log n)`.** `closestRec` y `sortByX` no son de
-  cola, pero su profundidad es `⌈log2 n⌉` (unas 20 llamadas para
-  `n = 10⁶`). Las 10 funciones `@tailrec` se compilan como ciclos y usan
-  pila `O(1)`.
+- **Auxiliary memory: `O(n)`.**
+  At any moment, only the lists belonging to the calls on the current
+  recursion path are alive, and their total size is
 
- Por eso `@tailrec` en los `merge` es necesario y no solo estético: un
- `merge` recursivo que no sea de cola necesitaría `n` marcos de pila y
- desbordaría con `n = 10⁶`. Con la implementación actual se procesaron
- 10⁶ puntos sin problemas con la pila por defecto.
+  `n + n/2 + n/4 + … ≤ 2n`
+
+  The lists belonging to calls that have already finished can be released.
+  A total of `Θ(n log n)` list cells are created throughout the execution,
+  but they are not all alive at the same time.
+
+- **Call stack: `O(log n)`.**
+  `closestRec` and `sortByX` are not tail-recursive, but their depth is
+  `⌈log2 n⌉` (about 20 calls for `n = 10⁶`).
+
+  The 10 functions annotated with `@tailrec` are compiled as loops and use
+  `O(1)` stack space.
+
+For this reason, using `@tailrec` in the merge functions is necessary and
+not only a stylistic choice: a recursive merge that is not tail-recursive
+would require `n` stack frames and could overflow the stack for `n = 10⁶`.
+
+With the current implementation, `10⁶` points were processed successfully
+using the default stack.

@@ -1,152 +1,151 @@
-# Problema 1 - Demostración de correctitud
+# Problem 1 - Correctness Proof
 
-## Inducción estructural de `mergeAndCount`
+## Structural Induction for `mergeAndCount`
 
-### Propiedad
+### Property
 
-Sean `L` y `R` dos listas ordenadas.
+Let `L` and `R` be two sorted lists.
 
-Queremos demostrar que:
+We want to prove that:
 
 `mergeAndCount(L, R) = (M, k)`
 
-donde:
+where:
 
-- `M` contiene los elementos de `L` y `R` en orden.
-- `k` es la cantidad de inversiones entre los elementos de `L` y `R`.
+- `M` contains the elements of `L` and `R` in sorted order.
+- `k` is the number of inversions between the elements of `L` and `R`.
 
 ---
 
-## Paso base
+## Base Case
 
-### Caso 1: `L = Nil`
+### Case 1: `L = Nil`
 
-Queremos demostrar:
+We want to prove:
 
 `mergeAndCount(Nil, R) = (R, 0)`
 
 1. `mergeAndCount(Nil, R)`  
-   Objetivo.
+   Goal.
 
-2. Como `L` no tiene elementos, solamente quedan los elementos de `R`.  
-   Definición de `mergeAndCount`.
+2. Since `L` has no elements, only the elements of `R` remain.  
+   Definition of `mergeAndCount`.
 
-3. No se generan nuevas inversiones porque no existen elementos en `L`.
+3. No new inversions are generated because there are no elements in `L`.
 
-Por lo tanto:
+Therefore:
 
 `mergeAndCount(Nil, R) = (R, 0)`
 
-Entonces:
+Then:
 
 `(R, 0) = (R, 0)`
 
-Se cumple el paso base.
+The base case holds.
 
-### Caso 2: `R = Nil`
+### Case 2: `R = Nil`
 
-De forma análoga:
+Similarly:
 
 `mergeAndCount(L, Nil) = (L, 0)`
 
-porque solamente quedan los elementos de `L` y no se generan nuevas
-inversiones.
+because only the elements of `L` remain and no new inversions are
+generated.
 
 ---
 
-## Paso recursivo
+## Recursive Step
 
-Sean:
+Let:
 
 `L = hL :: tL`
 
 `R = hR :: tR`
 
-### H.I.
+### I.H.
 
-Suponemos que `mergeAndCount` funciona correctamente para listas más
-pequeñas.
+We assume that `mergeAndCount` works correctly for smaller lists.
 
-Es decir:
+That is:
 
 `mergeAndCount(tL, R)`
 
-y
+and
 
 `mergeAndCount(L, tR)`
 
-devuelven correctamente la lista ordenada y la cantidad de inversiones
-correspondientes.
+correctly return the sorted list and the corresponding number of
+inversions.
 
 ---
 
-### Caso 1: `hL <= hR`
+### Case 1: `hL <= hR`
 
 1. `mergeAndCount(hL :: tL, hR :: tR)`  
-   Objetivo.
+   Goal.
 
-2. Como `hL <= hR`, se toma `hL`.  
-   Definición de `mergeAndCount`.
+2. Since `hL <= hR`, `hL` is selected.  
+   Definition of `mergeAndCount`.
 
-3. Como `R` está ordenada, `hL` tampoco es mayor que los elementos que
-   aparecen después de `hR`.
+3. Since `R` is sorted, `hL` is also not greater than the elements that
+   appear after `hR`.
 
-4. Por lo tanto, no se agrega ninguna inversión nueva.
+4. Therefore, no new inversion is added.
 
-5. Se continúa con:
+5. The algorithm continues with:
 
    `mergeAndCount(tL, hR :: tR)`
 
-   Definición recursiva.
+   Recursive definition.
 
-6. Por H.I., esta llamada ordena correctamente los elementos restantes
-   y cuenta correctamente sus inversiones.
+6. By the I.H., this call correctly sorts the remaining elements and
+   correctly counts their inversions.
 
-Por lo tanto, el resultado completo queda ordenado y el número de
-inversiones es correcto.
+Therefore, the complete result is sorted and the number of inversions is
+correct.
 
 ---
 
-### Caso 2: `hL > hR`
+### Case 2: `hL > hR`
 
 1. `mergeAndCount(hL :: tL, hR :: tR)`  
-   Objetivo.
+   Goal.
 
-2. Como `hL > hR`, se toma `hR`.  
-   Definición de `mergeAndCount`.
+2. Since `hL > hR`, `hR` is selected.  
+   Definition of `mergeAndCount`.
 
-3. Como `L` está ordenada, todos los elementos que quedan en `L` son
-   mayores o iguales que `hL`.
+3. Since `L` is sorted, all the elements remaining in `L` are greater
+   than or equal to `hL`.
 
-4. Por lo tanto, `hR` es menor que todos los elementos restantes de `L`.
+4. Therefore, `hR` is smaller than all the remaining elements of `L`.
 
-5. Se generan:
+5. This generates:
 
    `|L|`
 
-   nuevas inversiones.
+   new inversions.
 
-6. Se continúa con:
+6. The algorithm continues with:
 
    `mergeAndCount(hL :: tL, tR)`
 
-   Definición recursiva.
+   Recursive definition.
 
-7. Por H.I., esta llamada ordena correctamente los elementos restantes
-   y cuenta correctamente sus inversiones.
+7. By the I.H., this call correctly sorts the remaining elements and
+   correctly counts their inversions.
 
-Entonces:
+Then:
 
-`inversiones = |L| + inversiones restantes`
+`inversions = |L| + remaining inversions`
 
-Por lo tanto, el resultado completo queda ordenado y el número de
-inversiones es correcto.
+Therefore, the complete result is sorted and the number of inversions is
+correct.
 
 ---
 
-## Conclusión
+## Conclusion
 
-Como la propiedad se cumple en los casos base y se mantiene en los casos
-recursivos, por inducción estructural se concluye que `mergeAndCount`
-une correctamente dos listas ordenadas y cuenta correctamente las
-inversiones entre ellas.
+Since the property holds in the base cases and is preserved in the
+recursive cases, by structural induction we conclude that `mergeAndCount`
+correctly merges two sorted lists and correctly counts the inversions
+between them.

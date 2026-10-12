@@ -1,216 +1,458 @@
-# Problema 3 - Demostración de correctitud
+# Problem 3 - Correctness Proof
 
-## Notación
+## Notation
 
-- `dist²(p, q) = (xp - xq)² + (yp - yq)²` (distancia al cuadrado).
-- Para una lista de puntos `L`, `δ(L)` es la menor distancia al cuadrado
-  entre dos posiciones **distintas** de `L`. Si `L` tiene un solo punto,
-  `δ(L) = ∞` (en el código, `Infinity = Long.MaxValue`).
-- `|L|` es la cantidad de puntos de `L`.
+- `dist²(p, q) = (xp - xq)² + (yp - yq)²` (squared distance).
+- For a list of points `L`, `δ(L)` is the minimum squared distance between
+  two **different positions** in `L`. If `L` contains only one point,
+  `δ(L) = ∞` (in the code, `Infinity = Long.MaxValue`).
+- `|L|` is the number of points in `L`.
 
-Trabajamos con distancias al cuadrado porque `√` es creciente: el par que
-minimiza `dist²` también minimiza la distancia. Por eso basta demostrar que
-el algoritmo calcula `δ(L)`, y al final `closestDistance` devuelve
-`roundTo4(√δ(L))`.
+We work with squared distances because `√` is increasing: the pair that
+minimizes `dist²` also minimizes the actual distance.
 
-La demostración principal es sobre `closestRec`. Antes demostramos tres
-lemas sobre las funciones auxiliares que usa en el paso de combinación.
+Therefore, it is enough to prove that the algorithm computes `δ(L)`, and
+at the end `closestDistance` returns:
 
----
+`roundTo4(√δ(L))`
 
-## Lema 1: `mergeByYRC` mezcla correctamente
-
-### Propiedad
-
-Si `A` y `B` están ordenadas por `y` y `acum` contiene, en orden inverso,
-una lista ordenada por `y` cuyos elementos son todos `≤` (en `y`) que los
-de `A` y `B`, entonces `mergeByYRC(A, B, acum)` devuelve
-`reverse(acum) ++ merge(A, B)`: una lista ordenada por `y` con exactamente
-los elementos de `acum`, `A` y `B`.
-
-### Paso base: `A = Nil`, `B = Nil`
-
-Se devuelve `reverseListRC(acum, Nil)`, que es `reverse(acum)`. Se cumple.
-
-### H.I.
-
-La propiedad se cumple para todo par de listas con `|A| + |B| = k`.
-
-### Paso inductivo: `|A| + |B| = k + 1`
-
-Sea `h` el elemento que se toma: la cabeza de `A` si `B = Nil`, la cabeza
-de `B` si `A = Nil`, o la cabeza con menor `y` si ambas son no vacías.
-
-1. Como `A` y `B` están ordenadas, `h` es el elemento de menor `y` entre
-   todos los que quedan en `A` y `B`.
-2. Por la hipótesis sobre `acum`, `h` es mayor o igual (en `y`) que todos
-   los elementos de `acum`, así que `h :: acum` sigue cumpliendo la
-   condición del acumulador.
-3. La llamada recursiva tiene `k` elementos entre las dos listas.
-4. Por H.I., el resultado está ordenado por `y` y contiene todos los
-   elementos.
-
-Llamando con `acum = Nil` se obtiene `merge(A, B)`. ∎
-
-> La misma demostración, cambiando `y` por `(x, y)` en orden lexicográfico,
-> prueba `mergeByXRC`. Es el mismo argumento usado en `mergeAndCount` del
-> Problema 1.
+The main proof is about `closestRec`. Before proving it, we establish three
+lemmas about the auxiliary functions used in the combine step.
 
 ---
 
-## Lema 2: `scanNeighborsRC` y `scanStripRC`
+## Lemma 1: `mergeByYRC` Merges Correctly
+
+### Property
+
+If `A` and `B` are sorted by `y`, and `accumulator` contains, in reverse
+order, a list sorted by `y` whose elements are all `≤` (by `y`) the
+elements of `A` and `B`, then:
+
+`mergeByYRC(A, B, accumulator)`
+
+returns:
+
+`reverse(accumulator) ++ merge(A, B)`
+
+That is, a list sorted by `y` containing exactly the elements of
+`accumulator`, `A`, and `B`.
+
+### Base Case: `A = Nil`, `B = Nil`
+
+The function returns:
+
+`reverseListRC(accumulator, Nil)`
+
+which is:
+
+`reverse(accumulator)`
+
+Therefore, the property holds.
+
+### I.H.
+
+Assume that the property holds for every pair of lists such that:
+
+`|A| + |B| = k`
+
+### Inductive Step: `|A| + |B| = k + 1`
+
+Let `h` be the selected element:
+
+- the head of `A` if `B = Nil`;
+- the head of `B` if `A = Nil`;
+- or the head with the smallest `y` if both lists are non-empty.
+
+1. Since `A` and `B` are sorted, `h` is the element with the smallest
+   `y` among all the remaining elements of `A` and `B`.
+
+2. By the condition on `accumulator`, `h` is greater than or equal to
+   every element already stored in `accumulator` with respect to `y`.
+   Therefore, `h :: accumulator` still satisfies the accumulator
+   condition.
+
+3. The recursive call has `k` elements remaining between both lists.
+
+4. By the I.H., the result is sorted by `y` and contains all the elements.
+
+Calling the function with:
+
+`accumulator = Nil`
+
+produces `merge(A, B)`. ∎
+
+> The same proof, replacing `y` with `(x, y)` in lexicographic order,
+> proves the correctness of `mergeByXRC`.
+> This is the same argument used in `mergeAndCount` from Problem 1.
+
+---
+
+## Lemma 2: `scanNeighborsRC` and `scanStripRC`
 
 ### 2a. `scanNeighborsRC`
 
-**Propiedad.** Si `Q` está ordenada por `y` y todo `q ∈ Q` cumple
-`yq ≥ yp`, entonces
+**Property.**
 
-`scanNeighborsRC(p, Q, b) = min(b, min{ dist²(p, q) : q ∈ Q })`.
+If `Q` is sorted by `y` and every `q ∈ Q` satisfies:
 
-**Paso base: `Q = Nil`.** Se devuelve `b`, y `min(b, min ∅) = min(b, ∞) = b`.
+`yq ≥ yp`
 
-**H.I.** La propiedad se cumple para la cola `t` de `Q`.
+then:
 
-**Paso inductivo: `Q = q :: t`.** Sea `dy = yq - yp`.
+`scanNeighborsRC(p, Q, b) = min(b, min{ dist²(p, q) : q ∈ Q })`
 
-- **Caso `dy² ≥ b` (corte).** Como `Q` está ordenada por `y`, todo
-  `q' ∈ Q` cumple `yq' - yp ≥ dy ≥ 0`, así que
-  `dist²(p, q') ≥ (yq' - yp)² ≥ dy² ≥ b`. Ningún punto de `Q` mejora `b`,
-  y devolver `b` es correcto.
-- **Caso `dy² < b`.** Se llama con `b' = min(b, dist²(p, q))` sobre `t`.
-  Por H.I. el resultado es `min(b', min_{q' ∈ t} dist²(p, q'))`
-  `= min(b, min_{q' ∈ Q} dist²(p, q'))`.
+### Base Case: `Q = Nil`
+
+The function returns `b`, and:
+
+`min(b, min ∅) = min(b, ∞) = b`
+
+Therefore, the property holds.
+
+### I.H.
+
+Assume that the property holds for the tail `t` of `Q`.
+
+### Inductive Step: `Q = q :: t`
+
+Let:
+
+`dy = yq - yp`
+
+#### Case 1: `dy² ≥ b`
+
+Since `Q` is sorted by `y`, every `q' ∈ Q` satisfies:
+
+`yq' - yp ≥ dy ≥ 0`
+
+Therefore:
+
+`dist²(p, q') ≥ (yq' - yp)² ≥ dy² ≥ b`
+
+No point in `Q` can improve `b`, so returning `b` is correct.
+
+#### Case 2: `dy² < b`
+
+The function makes a recursive call over `t` with:
+
+`b' = min(b, dist²(p, q))`
+
+By the I.H., the result is:
+
+`min(b', min_{q' ∈ t} dist²(p, q'))`
+
+which is equal to:
+
+`min(b, min_{q' ∈ Q} dist²(p, q'))`
+
+Therefore, `scanNeighborsRC` is correct.
+
+---
 
 ### 2b. `scanStripRC`
 
-**Propiedad.** Si `S` está ordenada por `y`, entonces
-`scanStripRC(S, b) = min(b, δ(S))`.
+**Property.**
 
-**Paso base: `S = Nil`.** Se devuelve `b = min(b, ∞)`.
+If `S` is sorted by `y`, then:
 
-**H.I.** La propiedad se cumple para la cola `t` de `S`.
+`scanStripRC(S, b) = min(b, δ(S))`
 
-**Paso inductivo: `S = p :: t`.** Todo par de `S` es de la forma `(p, q)`
-con `q ∈ t` o es un par dentro de `t`. Por 2a,
-`b' = scanNeighborsRC(p, t, b) = min(b, min_{q ∈ t} dist²(p, q))`.
-Por H.I., `scanStripRC(t, b') = min(b', δ(t)) = min(b, δ(S))`. ∎
+### Base Case: `S = Nil`
+
+The function returns:
+
+`b = min(b, ∞)`
+
+Therefore, the property holds.
+
+### I.H.
+
+Assume that the property holds for the tail `t` of `S`.
+
+### Inductive Step: `S = p :: t`
+
+Every pair in `S` is either:
+
+- a pair `(p, q)` where `q ∈ t`, or
+- a pair completely contained in `t`.
+
+By Lemma 2a:
+
+`b' = scanNeighborsRC(p, t, b)`
+
+and therefore:
+
+`b' = min(b, min_{q ∈ t} dist²(p, q))`
+
+By the I.H.:
+
+`scanStripRC(t, b') = min(b', δ(t))`
+
+Therefore:
+
+`scanStripRC(t, b') = min(b, δ(S))`
+
+Thus, `scanStripRC` is correct. ∎
 
 ---
 
-## Lema 3: la franja contiene todos los pares cruzados útiles
+## Lemma 3: The Strip Contains All Useful Cross Pairs
 
-Sean `left` y `right` las dos mitades, `midX` la `x` del primer punto de
-`right` y `d = min(δ(left), δ(right))`.
+Let `left` and `right` be the two halves, let `midX` be the `x`
+coordinate of the first point in `right`, and let:
 
-**Propiedad.** Si `p ∈ left`, `q ∈ right` y `dist²(p, q) < d`, entonces
-`p` y `q` pertenecen a la franja `{ r : (xr - midX)² < d }`.
+`d = min(δ(left), δ(right))`
 
-**Demostración.**
+### Property
 
-1. La lista está ordenada por `x` y la dividimos por **posición**, así que
-   `xp ≤ midX ≤ xq`.
-2. Por lo tanto `0 ≤ midX - xp ≤ xq - xp` y `0 ≤ xq - midX ≤ xq - xp`.
-3. Entonces `(xp - midX)² ≤ (xq - xp)² ≤ dist²(p, q) < d`, y lo mismo para `q`.
-4. Así, `buildStripRC` conserva a `p` y a `q`.
+If:
 
-Además, `buildStripRC` recorre la lista ordenada por `y` y conserva el
-orden relativo (en reversa, que luego se invierte una vez), así que la
-franja queda **ordenada por `y`**, como necesita el Lema 2. ∎
+`p ∈ left`
+
+`q ∈ right`
+
+and:
+
+`dist²(p, q) < d`
+
+then both `p` and `q` belong to the strip:
+
+`{ r : (xr - midX)² < d }`
+
+### Proof
+
+1. The list is sorted by `x` and is divided by **position**, so:
+
+   `xp ≤ midX ≤ xq`
+
+2. Therefore:
+
+   `0 ≤ midX - xp ≤ xq - xp`
+
+   and:
+
+   `0 ≤ xq - midX ≤ xq - xp`
+
+3. Then:
+
+   `(xp - midX)² ≤ (xq - xp)² ≤ dist²(p, q) < d`
+
+   and the same reasoning applies to `q`.
+
+4. Therefore, `buildStripRC` keeps both `p` and `q`.
+
+In addition, `buildStripRC` traverses the list sorted by `y` and preserves
+the relative order of the points in reverse order, which is then reversed
+once.
+
+Therefore, the strip remains **sorted by `y`**, as required by Lemma 2. ∎
 
 ---
 
-## Teorema: `closestRec` es correcta (inducción estructural)
+## Theorem: `closestRec` Is Correct
 
-### Propiedad `P(L)`
+We prove the theorem using structural induction.
 
-Para toda lista no vacía `L` ordenada por `x` con `n = |L|`:
+### Property `P(L)`
+
+For every non-empty list `L` sorted by `x`, with:
+
+`n = |L|`
+
+we have:
 
 `closestRec(L, n) = (δ(L), Y)`
 
-donde `Y` contiene exactamente los puntos de `L` ordenados por `y`.
+where `Y` contains exactly the points of `L` sorted by `y`.
 
-La inducción es estructural sobre la lista: cada llamada recursiva se hace
-sobre las sublistas `left` y `right`, que son estrictamente más pequeñas
-que `L` cuando `|L| ≥ 2`.
-
----
-
-### Paso base: `L = p :: Nil` (`n = 1`)
-
-1. `closestRec(p :: Nil, 1)`. Objetivo.
-2. Por el primer caso del `match`, se devuelve `(Infinity, p :: Nil)`.
-3. Un solo punto no tiene pares de posiciones distintas, así que
-   `δ(L) = ∞ = Infinity`.
-4. Una lista de un elemento ya está ordenada por `y`.
-
-Por lo tanto `P(p :: Nil)` se cumple.
+The induction is structural over the list: every recursive call is made
+on the sublists `left` and `right`, which are strictly smaller than `L`
+when `|L| ≥ 2`.
 
 ---
 
-### H.I.
+### Base Case: `L = p :: Nil` (`n = 1`)
 
-Para `L` con `n ≥ 2`, suponemos que la propiedad se cumple para las
-sublistas `left` (los primeros `⌊n/2⌋` puntos) y `right` (los
-`⌈n/2⌉` restantes):
+1. `closestRec(p :: Nil, 1)`  
+   Goal.
 
-- `closestRec(left, ⌊n/2⌋) = (δ(left), leftByY)`
-- `closestRec(right, ⌈n/2⌉) = (δ(right), rightByY)`
+2. By the first case of the `match`, the function returns:
 
-Ambas son no vacías porque `n ≥ 2`, y ambas siguen ordenadas por `x`.
+   `(Infinity, p :: Nil)`
 
----
+3. A single point has no pair of different positions, so:
 
-### Paso inductivo: `n ≥ 2`
+   `δ(L) = ∞ = Infinity`
 
-1. `closestRec(L, n)`. Objetivo.
-2. `splitListRC(L, ⌊n/2⌋, Nil)` produce `left` y `right`.
-   Definición de `splitListRC`.
-3. Por H.I., `d1 = δ(left)` y `d2 = δ(right)`, y `leftByY`, `rightByY`
-   están ordenadas por `y`.
-4. Sea `d = min(d1, d2)`.
-5. Por el Lema 1, `allByY = mergeByYRC(leftByY, rightByY, Nil)` contiene
-   todos los puntos de `L` ordenados por `y`. **Esto prueba la segunda
-   componente.**
-6. Todo par de posiciones distintas de `L` es de uno de tres tipos:
-   - ambos en `left`: su distancia es `≥ d1 ≥ d`;
-   - ambos en `right`: su distancia es `≥ d2 ≥ d`;
-   - uno en cada mitad (par cruzado). Sea `c` el mínimo de estos.
+4. A list containing one element is already sorted by `y`.
 
-   Por lo tanto `δ(L) = min(d, c)`.
-7. Sea `S` la franja. Por el Lema 2, el resultado es
-   `scanStripRC(S, d) = min(d, δ(S))`.
-8. **El resultado no es menor que `δ(L)`.** Como `S` es una sublista de
-   `L`, `δ(S) ≥ δ(L)`, y además `d ≥ δ(L)`. Entonces
-   `min(d, δ(S)) ≥ δ(L)`.
-9. **El resultado no es mayor que `δ(L)`.**
-   - Si `c ≥ d`, entonces `δ(L) = d` y `min(d, δ(S)) ≤ d = δ(L)`.
-   - Si `c < d`, el par cruzado que alcanza `c` está en `S` por el
-     Lema 3, así que `δ(S) ≤ c` y `min(d, δ(S)) ≤ c = δ(L)`.
-10. De 8 y 9, la primera componente es exactamente `δ(L)`.
+Therefore:
 
-Por lo tanto `P(L)` se cumple.
+`P(p :: Nil)`
+
+holds.
 
 ---
 
-## Conclusión
+### I.H.
 
-Como la propiedad se cumple en el caso base y se conserva en el paso
-inductivo, por inducción estructural `closestRec` devuelve la menor
-distancia al cuadrado entre puntos distintos y la lista ordenada por `y`.
+For a list `L` with `n ≥ 2`, assume that the property holds for the
+sublists `left` and `right`.
 
-Como `sortByX` ordena la entrada por `x` (Lema 1 aplicado a `mergeByXRC`)
-y `√` es creciente, `closestDistance` devuelve
-`roundTo4(√δ(L))`, la menor distancia euclidiana redondeada a cuatro
-decimales. ∎
+`left` contains the first `⌊n/2⌋` points and `right` contains the remaining
+`⌈n/2⌉` points.
+
+Therefore:
+
+`closestRec(left, ⌊n/2⌋) = (δ(left), leftByY)`
+
+and:
+
+`closestRec(right, ⌈n/2⌉) = (δ(right), rightByY)`
+
+Both lists are non-empty because `n ≥ 2`, and both remain sorted by `x`.
 
 ---
 
-## Observaciones
+### Inductive Step: `n ≥ 2`
 
-- **Puntos con la misma `x` a ambos lados.** El Lema 3 solo usa
-  `xp ≤ midX ≤ xq`, que se cumple porque partimos por posición. Por eso el
-  algoritmo es correcto aunque haya muchas `x` repetidas (test 5).
-- **Puntos duplicados.** Si `d = 0`, la condición `dy² ≥ 0` corta el
-  escaneo de inmediato y el resultado es `0` (test 3).
-- **Desigualdad estricta en la franja.** Usar `(x - midX)² < d` en lugar de
-  `≤ d` no pierde nada: un par cruzado con distancia `≥ d` no mejora `d`.
+1. `closestRec(L, n)`  
+   Goal.
+
+2. `splitListRC(L, ⌊n/2⌋, Nil)` produces `left` and `right`.  
+   Definition of `splitListRC`.
+
+3. By the I.H.:
+
+   `d1 = δ(left)`
+
+   and:
+
+   `d2 = δ(right)`
+
+   Also, `leftByY` and `rightByY` are sorted by `y`.
+
+4. Let:
+
+   `d = min(d1, d2)`
+
+5. By Lemma 1:
+
+   `allByY = mergeByYRC(leftByY, rightByY, Nil)`
+
+   contains all the points of `L` sorted by `y`.
+
+   **This proves the second component of the result.**
+
+6. Every pair of different positions in `L` belongs to one of three
+   categories:
+
+    - both points are in `left`: their distance is `≥ d1 ≥ d`;
+    - both points are in `right`: their distance is `≥ d2 ≥ d`;
+    - one point is in each half: a cross pair.
+
+   Let `c` be the minimum distance among the cross pairs.
+
+   Therefore:
+
+   `δ(L) = min(d, c)`
+
+7. Let `S` be the strip.
+
+   By Lemma 2:
+
+   `scanStripRC(S, d) = min(d, δ(S))`
+
+8. **The result is not smaller than `δ(L)`.**
+
+   Since `S` is a sublist of `L`:
+
+   `δ(S) ≥ δ(L)`
+
+   and also:
+
+   `d ≥ δ(L)`
+
+   Therefore:
+
+   `min(d, δ(S)) ≥ δ(L)`
+
+9. **The result is not greater than `δ(L)`.**
+
+    - If `c ≥ d`, then:
+
+      `δ(L) = d`
+
+      and:
+
+      `min(d, δ(S)) ≤ d = δ(L)`
+
+    - If `c < d`, the cross pair that reaches `c` belongs to `S` by
+      Lemma 3.
+
+      Therefore:
+
+      `δ(S) ≤ c`
+
+      and:
+
+      `min(d, δ(S)) ≤ c = δ(L)`
+
+10. From steps 8 and 9, the first component of the result is exactly:
+
+    `δ(L)`
+
+Therefore:
+
+`P(L)`
+
+holds.
+
+---
+
+## Conclusion
+
+Since the property holds in the base case and is preserved in the
+inductive step, by structural induction `closestRec` returns the minimum
+squared distance between different points and the list sorted by `y`.
+
+Since `sortByX` sorts the input by `x` (Lemma 1 applied to `mergeByXRC`)
+and `√` is increasing, `closestDistance` returns:
+
+`roundTo4(√δ(L))`
+
+which is the minimum Euclidean distance rounded to four decimal digits. ∎
+
+---
+
+## Observations
+
+- **Points with the same `x` coordinate on both sides.**
+  Lemma 3 only uses:
+
+  `xp ≤ midX ≤ xq`
+
+  which holds because the list is divided by position.
+
+  Therefore, the algorithm remains correct even when many points have the
+  same `x` coordinate (test 5).
+
+- **Duplicated points.**
+  If `d = 0`, the condition:
+
+  `dy² ≥ 0`
+
+  immediately stops the scan and the result is `0` (test 3).
+
+- **Strict inequality in the strip.**
+  Using:
+
+  `(x - midX)² < d`
+
+  instead of:
+
+  `(x - midX)² ≤ d`
+
+  does not lose any useful pair, because a cross pair with distance
+  `≥ d` cannot improve the current value of `d`.

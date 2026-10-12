@@ -1,48 +1,48 @@
-# Problema 1 - Análisis de complejidad
+# Problem 1 - Complexity Analysis
 
-## Complejidad de `mergeAndCount`
+## Complexity of `mergeAndCount`
 
-La función `mergeAndCount` recorre los elementos de las dos listas
-para unirlas y contar las inversiones.
+The `mergeAndCount` function traverses the elements of both lists
+to merge them and count the inversions.
 
-Si entre las dos listas hay `n` elementos:
+If there are `n` elements between the two lists:
 
 `M(n) = O(n)`
 
 ---
 
-## Complejidad de `mergeSortAndCount`
+## Complexity of `mergeSortAndCount`
 
-La función divide la lista en dos mitades, realiza una llamada recursiva
-sobre cada mitad y luego utiliza `mergeAndCount`.
+The function divides the list into two halves, makes a recursive call
+on each half, and then uses `mergeAndCount`.
 
-Por lo tanto:
+Therefore:
 
 `T(n) = 2T(n/2) + n`
 
-Caso base:
+Base case:
 
 `T(1) = 1`
 
 ---
 
-## Resolución de la recurrencia
+## Solving the Recurrence
 
-### Paso 1
+### Step 1
 
-Partimos de:
+We start with:
 
 `T(n) = 2T(n/2) + n`
 
-Aplicamos la recurrencia a `T(n/2)`:
+We apply the recurrence to `T(n/2)`:
 
 `T(n/2) = 2T(n/4) + n/2`
 
 ---
 
-### Paso 2
+### Step 2
 
-Sustituimos:
+We substitute:
 
 `T(n) = 2[2T(n/4) + n/2] + n`
 
@@ -52,13 +52,13 @@ Sustituimos:
 
 ---
 
-### Paso 3
+### Step 3
 
-Aplicamos nuevamente la recurrencia:
+We apply the recurrence again:
 
 `T(n/4) = 2T(n/8) + n/4`
 
-Entonces:
+Then:
 
 `T(n) = 4[2T(n/8) + n/4] + 2n`
 
@@ -68,77 +68,77 @@ Entonces:
 
 ---
 
-### Paso 4
+### Step 4
 
-Después de `i` expansiones se observa el patrón:
+After `i` expansions, the following pattern can be observed:
 
 `T(n) = 2^i T(n/2^i) + in`
 
 ---
 
-### Paso 5
+### Step 5
 
-La recursión termina cuando se llega al caso base:
+The recursion ends when the base case is reached:
 
 `n/2^i = 1`
 
-Entonces:
+Then:
 
 `2^i = n`
 
-Por lo tanto:
+Therefore:
 
 `i = log2(n)`
 
 ---
 
-### Paso 6
+### Step 6
 
-Sustituimos `i = log2(n)`:
+We substitute `i = log2(n)`:
 
 `T(n) = 2^(log2(n)) T(1) + n log2(n)`
 
-Como:
+Since:
 
 `2^(log2(n)) = n`
 
-y:
+and:
 
 `T(1) = 1`
 
-obtenemos:
+we obtain:
 
 `T(n) = n + n log2(n)`
 
 ---
 
-### Paso 7
+### Step 7
 
-El término dominante es:
+The dominant term is:
 
 `n log n`
 
-Por lo tanto:
+Therefore:
 
 `T(n) = O(n log n)`
 
-También se puede expresar de manera más precisa como:
+It can also be expressed more precisely as:
 
 `T(n) = Θ(n log n)`
 
 ---
 
-## Comprobación con Método Maestro
+## Verification Using the Master Theorem
 
-La recurrencia es:
+The recurrence is:
 
 `T(n) = 2T(n/2) + n`
 
-Comparando con:
+Comparing it with:
 
 `T(n) = aT(n/b) + cn^d`
 
-tenemos:
+we have:
 
 `a = 2`
 
@@ -146,35 +146,35 @@ tenemos:
 
 `d = 1`
 
-Calculamos:
+We calculate:
 
 `b^d = 2^1 = 2`
 
-Entonces:
+Then:
 
 `a = b^d`
 
-Por el segundo caso del Método Maestro:
+By the second case of the Master Theorem:
 
 `T(n) = Θ(n^d log n)`
 
-Por lo tanto:
+Therefore:
 
 `T(n) = Θ(n log n)`
 
-El resultado coincide con el obtenido mediante sustituciones sucesivas.
+This result matches the one obtained through successive substitutions.
 
 ---
 
-## Complejidad espacial
+## Space Complexity
 
-Durante el algoritmo se crean listas auxiliares para dividir y mezclar
-los elementos.
+During the algorithm, auxiliary lists are created to divide and merge
+the elements.
 
-Por lo tanto, la complejidad espacial auxiliar es:
+Therefore, the auxiliary space complexity is:
 
 `O(n)`
 
-La profundidad de la recursión de `mergeSortAndCount` es:
+The recursion depth of `mergeSortAndCount` is:
 
 `O(log n)`
